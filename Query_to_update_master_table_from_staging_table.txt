@@ -1,0 +1,10 @@
+MERGE
+  dataset_name.master_table AS Master
+USING
+  dataset_name.staging_table AS Staging
+ON
+  Master.id = Staging.id
+  WHEN NOT MATCHED THEN INSERT ROW
+  WHEN MATCHED
+  AND MD5(CONCAT(Master.homepage,Master.original_language,CAST(Master.popularity AS STRING),CAST(Master.release_date AS STRING),CAST(Master.revenue AS STRING),CAST(Master.runtime AS STRING),Master.status,CAST(Master.title AS STRING),CAST(Master.vote_average AS STRING), CAST(Master.vote_count AS STRING), CAST(Master.modified_date AS STRING))) <> MD5(CONCAT(Staging.homepage,Staging.original_language,CAST(Staging.popularity AS STRING),CAST(Staging.release_date AS STRING),CAST(Staging.revenue AS STRING),CAST(Staging.runtime AS STRING),Staging.status,CAST(Staging.title AS STRING),CAST(Staging.vote_average AS STRING), CAST(Staging.vote_count AS STRING), CAST(Staging.modified_date AS STRING))) THEN
+  UPDATE SET homepage = Staging.homepage, original_language = Staging.original_language,	original_title = Staging.original_title,	popularity = Staging.popularity,	release_date = Staging.release_date,	revenue = Staging.revenue,	runtime = Staging.runtime,	status = Staging.status,	title = Staging.title,	vote_average = Staging.vote_average, vote_count = Staging.vote_count,	modified_date = Staging.modified_date
