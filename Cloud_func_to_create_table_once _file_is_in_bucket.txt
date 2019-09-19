@@ -1,0 +1,20 @@
+from google.cloud import bigquery
+import os
+    
+def createTable(event, context):
+    print("Start")
+    bucket = event['bucket']
+    file = event['name']
+    filename = os.path.splitext(file)[0]
+    print('Created: {}'.format(event['timeCreated']))
+    client = bigquery.Client()
+    uri = "gs://" + bucket + "/" + file
+    dataset_id = 'dataset'
+    dataset_ref = client.dataset(dataset_id)
+    job_config = bigquery.LoadJobConfig()
+    job_config.autodetect = True
+    job_config.write_disposition = "WRITE_TRUNCATE"
+    job_config.source_format = bigquery.SourceFormat.CSV
+    load_job = client.load_table_from_uri(uri, dataset_ref.table(filename), job_config=job_config)  # API request
+    load_job.result()
+    print("End")
